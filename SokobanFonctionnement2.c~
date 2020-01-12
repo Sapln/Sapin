@@ -26,7 +26,6 @@ void trouvePerso(char ** TJeu,int ,int,position * perso,char* caseInit);
 void afficheTab2D(char **, int ,int);
 void deplacement(char** TJeu,int,int);
 void bouge(char**,char,int,int,position * posPrev,position * posSuiv);
-void victoire(char**,int,int,int*);
 
 int main(){
   int hauteur = 4;
@@ -58,12 +57,6 @@ int main(){
   TJeu[3][3]='P';
   TJeu[2][2]='I';
   TJeu[1][1]='C';
-  TJeu[5][0]='I';
-  TJeu[4][1]='C';
-  TJeu[4][2]=' ';
-  TJeu[5][2]=' ';
-  
-  
 
   
   deplacement(TJeu,hauteur,largeur);
@@ -198,12 +191,6 @@ void deplacement(char** TJeu,int hauteur,int largeur){
     }
     bouge(TJeu, TJeu[posPrev.x][posPrev.y], hauteur, largeur,  &posPrev,&perso);
     afficheTab2D(TJeu,hauteur,largeur);
-    if(cont){
-      victoire(TJeu,hauteur,largeur,&cont);
-      if( cont-1){
-	printf("Victoire !!\n");
-      }
-    }
   }
   
 }
@@ -282,28 +269,4 @@ void bouge(char** TJeu,char objet,int hauteur,int largeur, position * posPrev, p
   strcpy(TJeu[posSuiv->x],change);
   free(change);
   
-}
-
-void victoire(char** TJeu, int hauteur,int largeur, int* cont){
-  int i=0;
-  int j=0;
-  int reste = 1;
-  *cont=0;
-  
-  while(i<largeur && reste){
-    // printf("\ni%d\n",i);
-    while(j<hauteur && reste){
-      //  printf("j%d\n",j);
-      if((TJeu[i][j]=='I'|| TJeu[i][j]=='p') && reste){
-	reste=0;
-	*cont=1;
-	//printf("i %d j%d fin %d",i,j,*cont);
-      }
-      j++;
-    }
-    j=0;
-    i++;
-  }
-  // printf("in victoire %d \n",*cont);
-
 }

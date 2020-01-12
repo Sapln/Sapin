@@ -20,6 +20,9 @@ void pause(){
     case SDL_QUIT:
       cont=0;
       break;
+    case SDL_KEYDOWN:
+      cont=0;
+      break;
     default:
       cont=1;
     }

@@ -25,8 +25,6 @@ SDL_Event pause();
 void trouvePerso(char ** TJeu,int ,int,position * perso,char* caseInit);
 void afficheTab2D(char **, int ,int);
 void deplacement(char** TJeu,int,int);
-void bouge(char**,char,int,int,position * posPrev,position * posSuiv);
-void victoire(char**,int,int,int*);
 
 int main(){
   int hauteur = 4;
@@ -57,13 +55,6 @@ int main(){
   }
   TJeu[3][3]='P';
   TJeu[2][2]='I';
-  TJeu[1][1]='C';
-  TJeu[5][0]='I';
-  TJeu[4][1]='C';
-  TJeu[4][2]=' ';
-  TJeu[5][2]=' ';
-  
-  
 
   
   deplacement(TJeu,hauteur,largeur);
@@ -136,7 +127,6 @@ void deplacement(char** TJeu,int hauteur,int largeur){
   SDL_Event event ;
   position perso;
   position posPrev;
-  position caisse;
   char nouvCase;
   char exCase;
   
@@ -154,156 +144,81 @@ void deplacement(char** TJeu,int hauteur,int largeur){
       cont=0;
     case SDL_KEYDOWN:
       switch(event.key.keysym.sym){
-	
       case SDLK_UP:
-	if(perso.y>0){ 
+	if(perso.y>0){
+	  if( TJeu[perso.x][perso.y-1] == 'I'){
+	    perso.y--;
+	    nouvCase='p';
+	  }
+	  else if(TJeu[perso.x][perso.y-1] == ' '){
+	  
 	  perso.y--;
+	  nouvCase='P';
+	  }
 	}
+      
 	break ;
-	
       case SDLK_DOWN:
 	if(perso.y<hauteur-1){
-	  perso.y++;
+	  if( TJeu[perso.x][perso.y +1] == 'I'){
+	    perso.y++;
+	    nouvCase='p';}
+	  else if(TJeu[perso.x][perso.y +1] == ' '){
+	    perso.y++;
+	    nouvCase='P';
+	  }
 	}
 	break ;
 	
       case SDLK_LEFT :
-	if(perso.x>0){    
+	if(perso.x>0){
+	  if( TJeu[perso.x -1][perso.y] == 'I'){
+	    
+	    perso.x--;
+	    nouvCase='p';}
+	  
+	  else if(TJeu[perso.x-1][perso.y] == ' '){
 	  perso.x--;
+	    nouvCase='P';
+	  }
 	}
+	//dessine(ecran);
 	break ;
-	
       case SDLK_RIGHT:
 	if(perso.x<largeur-1){
-	  perso.x++;
+	  if( TJeu[perso.x +1][perso.y] == 'I'){
+	    perso.x++;
+	    nouvCase='p';}
+	  else if(TJeu[perso.x+1][perso.y] == ' '){
+	    perso.x++;
+	    nouvCase='P';
+	  }
 	}
 	break ;
-
       case 'q':
 	cont=0 ;
 	break ;
       }
     }
 
-
-
-    
-    if( TJeu[perso.x][perso.y]=='C' ||TJeu[perso.x][perso.y]=='c' ){
-      caisse.x = perso.x + (perso.x - posPrev.x);
-      caisse.y = perso.y + (perso.y - posPrev.y);
-      if(caisse.x <largeur && caisse.x >=0 && caisse.y >=0 && caisse.y <hauteur){
-      bouge(TJeu, TJeu[perso.x][perso.y], hauteur, largeur,  &perso , &caisse);
-      }
-      
-    }
-    bouge(TJeu, TJeu[posPrev.x][posPrev.y], hauteur, largeur,  &posPrev,&perso);
-    afficheTab2D(TJeu,hauteur,largeur);
-    if(cont){
-      victoire(TJeu,hauteur,largeur,&cont);
-      if( cont-1){
-	printf("Victoire !!\n");
-      }
-    }
-  }
-  
-}
-
-
-void bouge(char** TJeu,char objet,int hauteur,int largeur, position * posPrev, position * posSuiv){
-
-  char nouvCase =objet ;
-  char exCase = objet;
-  char* change= (char*) malloc((hauteur+1)*sizeof(char));
-  
-  if(posSuiv->x < largeur && posSuiv->y >= 0 && posSuiv->x >=0 && posSuiv->y < hauteur){
-    
-    //   printf("a");
-    if(TJeu[posSuiv->x][posSuiv->y]!='#' && TJeu[posSuiv->x][posSuiv->y]!='C'  && TJeu[posSuiv->x][posSuiv->y]!='c' ){
-      
-      
-      //    printf("b");
-      
-      if((objet=='c' ||objet== 'p') && TJeu[posSuiv->x][posSuiv->y]==' '){
-	nouvCase=objet-32;
-	exCase='I';
-        
-	
-	
-      }
-      else if((objet=='C' ||objet== 'P') && TJeu[posSuiv->x][posSuiv->y]=='I'){
-	nouvCase=objet+32;
-	exCase=' ';
-	
-	
-      }
-      else if((objet=='C' ||objet== 'P') && TJeu[posSuiv->x][posSuiv->y]==' '){
-
-	nouvCase=objet;
-	exCase=' ';
-	
-      
-      }
-      else if((objet=='c' ||objet== 'p') && TJeu[posSuiv->x][posSuiv->y]=='I'){
-
-	nouvCase=objet;
-	exCase='I';
-      }
-
-
-      
-    }
+    if(exCase =='P'){
+      exCase=' ';}
     else{
-      posSuiv->x = posPrev->x;
-      posSuiv->y = posPrev->y;
-      exCase = objet;
-      nouvCase = objet;
+      exCase='I';}
     
-    }
     
-    //   printf("ex %c nouv%c",exCase,nouvCase);
-  }
-  else{
-    posSuiv->x = posPrev->x;
-    posSuiv->y = posPrev->y;
-    exCase = objet;
-    nouvCase = objet;
-      
-    //    printf("e0x %c nouv%c",exCase,nouvCase);
-  }
-  
-  
-  strcpy(change,TJeu[posPrev->x]);
-  change[posPrev->y]=exCase;  
-  strcpy(TJeu[posPrev->x],change);
-  
-  
-  strcpy(change,TJeu[posSuiv->x]);
-  change[posSuiv->y]=nouvCase;  
-  strcpy(TJeu[posSuiv->x],change);
-  free(change);
-  
-}
+    strcpy(change,TJeu[posPrev.x]);
+    change[posPrev.y]=exCase;  
+    strcpy(TJeu[posPrev.x],change);
 
-void victoire(char** TJeu, int hauteur,int largeur, int* cont){
-  int i=0;
-  int j=0;
-  int reste = 1;
-  *cont=0;
-  
-  while(i<largeur && reste){
-    // printf("\ni%d\n",i);
-    while(j<hauteur && reste){
-      //  printf("j%d\n",j);
-      if((TJeu[i][j]=='I'|| TJeu[i][j]=='p') && reste){
-	reste=0;
-	*cont=1;
-	//printf("i %d j%d fin %d",i,j,*cont);
-      }
-      j++;
-    }
-    j=0;
-    i++;
+    
+    strcpy(change,TJeu[perso.x]);
+    change[perso.y]=nouvCase;  
+    strcpy(TJeu[perso.x],change);
+
+    
+    afficheTab2D(TJeu,hauteur,largeur);
   }
-  // printf("in victoire %d \n",*cont);
 
 }
+
